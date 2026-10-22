@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s;
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+}
+
+:host(.cdk-drag-disabled) .card {
+  cursor: pointer;
+}
+
+:host(:not(.cdk-drag-disabled)) .card:active {
+  cursor: grabbing;
+}
+
+.card__labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.card__title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.card__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.card__has-text {
+  display: inline-flex;
+}
+
+.due {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+
+  &--overdue {
+    background: var(--danger-soft);
+    color: var(--danger);
+    font-weight: 500;
+  }
+
+  &--today,
+  &--soon {
+    background: var(--warning-soft);
+    color: var(--warning);
+    font-weight: 500;
+  }
+}

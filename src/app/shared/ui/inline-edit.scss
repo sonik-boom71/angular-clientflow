@@ -1,0 +1,37 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.inline-edit__text,
+.inline-edit__input {
+  width: 100%;
+  margin: 0;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.inline-edit__text {
+  display: block;
+  overflow: hidden;
+  background: transparent;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: text;
+
+  &:hover {
+    background: var(--surface);
+    border-color: var(--border);
+  }
+}
+
+.inline-edit__input {
+  background: var(--surface);
+  border-color: var(--accent);
+  outline: 2px solid var(--accent-soft);
+}

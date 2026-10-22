@@ -1,0 +1,150 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 56px);
+  min-height: 420px;
+}
+
+.board__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px 8px;
+}
+
+.board__title {
+  min-width: 0;
+  max-width: 480px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.board__stats {
+  color: var(--text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.board__overdue {
+  color: var(--danger);
+}
+
+.board__spacer {
+  flex: 1;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 24px 16px;
+}
+
+.search {
+  position: relative;
+  width: 260px;
+
+  > app-icon {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: var(--text-muted);
+  }
+
+  .input {
+    padding: 0 32px;
+  }
+}
+
+.search__key {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 0 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter {
+  border: 0;
+  cursor: pointer;
+  opacity: 0.55;
+
+  &:hover,
+  &--on {
+    opacity: 1;
+  }
+
+  &--on {
+    box-shadow: 0 0 0 2px currentColor;
+  }
+}
+
+.toolbar__hint {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.scroller {
+  /* Keeps absolutely positioned .sr-only labels inside the scroll area. */
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 0;
+  padding: 0 24px 24px;
+  overflow-x: auto;
+}
+
+.columns {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  height: 100%;
+}
+
+.add-column {
+  display: flex;
+  flex: none;
+  gap: 6px;
+  width: 290px;
+  padding: 8px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+}
+
+@media (max-width: 600px) {
+  .board__head,
+  .toolbar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .board__stats,
+  .hide-sm,
+  .search__key {
+    display: none;
+  }
+
+  .search {
+    width: 100%;
+  }
+
+  .scroller {
+    padding: 0 16px 16px;
+    scroll-padding-inline: 16px;
+    scroll-snap-type: x mandatory;
+  }
+}

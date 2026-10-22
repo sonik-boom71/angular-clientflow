@@ -1,0 +1,12 @@
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+
+import { BoardStore } from '../services/board-store';
+
+/** Sends the user back to the boards list when the board id in the URL doesn't exist. */
+export const boardExistsGuard: CanActivateFn = (route) => {
+  const store = inject(BoardStore);
+  const router = inject(Router);
+  const boardId = route.paramMap.get('id');
+  return boardId && store.findBoard(boardId) ? true : router.createUrlTree(['/']);
+};

@@ -1,0 +1,81 @@
+<section class="page">
+  <header class="page__head">
+    <div>
+      <h1 class="page__title">Your boards</h1>
+      <p class="page__subtitle">
+        {{ store.boardCount() }} {{ store.boardCount() === 1 ? 'board' : 'boards' }} · saved in this
+        browser
+      </p>
+    </div>
+
+    <form class="create" [formGroup]="form" (ngSubmit)="create()">
+      <label for="new-board" class="sr-only">Board name</label>
+      <input
+        id="new-board"
+        class="input"
+        formControlName="title"
+        placeholder="New board name"
+        maxlength="60"
+        autocomplete="off"
+      />
+      <button type="submit" class="btn btn--primary">
+        <app-icon name="plus" />
+        Create board
+      </button>
+    </form>
+  </header>
+
+  @if (summaries().length) {
+    <ul class="grid">
+      @for (board of summaries(); track board.id) {
+        <li class="tile">
+          <a class="tile__link" [routerLink]="['/board', board.id]">
+            <h2 class="tile__title">{{ board.title }}</h2>
+            <p class="tile__meta">
+              {{ board.columnCount }} columns · {{ board.cardCount }} cards
+              @if (board.overdueCount) {
+                <span class="tile__overdue">· {{ board.overdueCount }} overdue</span>
+              }
+            </p>
+            <div
+              class="progress"
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [attr.aria-valuenow]="board.progress"
+              [attr.aria-label]="'Progress of ' + board.title"
+            >
+              <span class="progress__bar" [style.width.%]="board.progress"></span>
+            </div>
+            <p class="tile__progress">{{ board.doneCount }} of {{ board.cardCount }} done</p>
+          </a>
+          <button
+            type="button"
+            class="icon-btn icon-btn--danger tile__delete"
+            [attr.aria-label]="'Delete board ' + board.title"
+            (click)="remove(board)"
+          >
+            <app-icon name="trash" />
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="empty">
+      <app-icon name="kanban" [size]="40" />
+      <h2>Create your first board</h2>
+      <p>Boards hold columns and cards. Start from scratch or load the demo boards.</p>
+      <button type="button" class="btn" (click)="store.resetToDemo()">
+        <app-icon name="refresh" />
+        Load demo boards
+      </button>
+    </div>
+  }
+
+  <footer class="page__foot">
+    <button type="button" class="btn btn--ghost" (click)="resetDemo()">
+      <app-icon name="refresh" />
+      Reset demo data
+    </button>
+  </footer>
+</section>

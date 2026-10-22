@@ -1,0 +1,71 @@
+<section class="column" [attr.aria-label]="column().title">
+  <header class="column__header">
+    <span
+      class="column__handle"
+      cdkDragHandle
+      [class.column__handle--off]="filtering()"
+      title="Drag to reorder"
+    >
+      <app-icon name="grip" [size]="16" />
+    </span>
+    <app-inline-edit
+      class="column__title"
+      [value]="column().title"
+      label="Column name"
+      [maxLength]="40"
+      (saved)="renamed.emit($event)"
+    />
+    <span class="column__count">
+      @if (filtering()) {
+        {{ visibleCards().length }}/{{ column().cards.length }}
+      } @else {
+        {{ column().cards.length }}
+      }
+    </span>
+    <button
+      type="button"
+      class="icon-btn icon-btn--danger"
+      [attr.aria-label]="'Delete column ' + column().title"
+      (click)="remove()"
+    >
+      <app-icon name="trash" [size]="16" />
+    </button>
+  </header>
+
+  <div
+    class="column__cards"
+    cdkDropList
+    [id]="listId()"
+    [cdkDropListData]="column().id"
+    [cdkDropListConnectedTo]="connectedTo()"
+    (cdkDropListDropped)="cardDropped.emit($event)"
+  >
+    @for (card of visibleCards(); track card.id) {
+      <app-card-item
+        cdkDrag
+        [cdkDragData]="card.id"
+        [cdkDragDisabled]="filtering()"
+        [card]="card"
+        [labels]="labels()"
+        (opened)="cardOpened.emit(card.id)"
+      />
+    } @empty {
+      <p class="column__empty">{{ filtering() ? 'No matching cards' : 'No cards yet' }}</p>
+    }
+  </div>
+
+  <form class="column__add" (submit)="$event.preventDefault(); addCard(newCard)">
+    <label class="sr-only" [for]="listId() + '-new'">New card in {{ column().title }}</label>
+    <input
+      #newCard
+      class="input"
+      [id]="listId() + '-new'"
+      placeholder="Add a card"
+      maxlength="120"
+      autocomplete="off"
+    />
+    <button type="submit" class="icon-btn" aria-label="Add card">
+      <app-icon name="plus" />
+    </button>
+  </form>
+</section>
