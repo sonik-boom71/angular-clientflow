@@ -7,7 +7,7 @@ A Kanban board built with **Angular 21**: boards, columns and cards you can drag
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-**Live demo:** LIVE_DEMO_URL
+**Live demo:** https://angular-taskflow.vercel.app
 
 ![TaskFlow board in the light theme](docs/board-light.png)
 
