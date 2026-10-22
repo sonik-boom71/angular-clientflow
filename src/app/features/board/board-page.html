@@ -1,0 +1,127 @@
+@if (board(); as board) {
+  <section class="board">
+    <header class="board__head">
+      <a routerLink="/" class="icon-btn" aria-label="Back to boards" title="Back to boards">
+        <app-icon name="arrow-left" />
+      </a>
+      <h1 class="board__title">
+        <app-inline-edit
+          [value]="board.title"
+          label="Board name"
+          [maxLength]="60"
+          (saved)="renameBoard($event)"
+        />
+      </h1>
+      @if (summary(); as summary) {
+        <span class="board__stats">
+          {{ summary.cardCount }} cards · {{ summary.progress }}% done
+          @if (summary.overdueCount) {
+            <span class="board__overdue">· {{ summary.overdueCount }} overdue</span>
+          }
+        </span>
+      }
+      <span class="board__spacer"></span>
+      <button type="button" class="btn btn--ghost" (click)="deleteBoard()">
+        <app-icon name="trash" [size]="16" />
+        <span class="hide-sm">Delete board</span>
+      </button>
+    </header>
+
+    <div class="toolbar">
+      <div class="search">
+        <app-icon name="search" [size]="16" />
+        <label for="board-search" class="sr-only">Search cards</label>
+        <input
+          #search
+          id="board-search"
+          type="search"
+          class="input"
+          placeholder="Search cards"
+          autocomplete="off"
+          [value]="query()"
+          (input)="query.set(search.value)"
+        />
+        @if (!query()) {
+          <kbd class="search__key" aria-hidden="true">/</kbd>
+        }
+      </div>
+
+      <div class="filters" role="group" aria-label="Filter by label">
+        @for (label of board.labels; track label.id) {
+          <button
+            type="button"
+            class="filter label label--{{ label.color }}"
+            [class.filter--on]="isLabelSelected(label.id)"
+            [attr.aria-pressed]="isLabelSelected(label.id)"
+            (click)="toggleLabel(label.id)"
+          >
+            {{ label.name }}
+          </button>
+        }
+      </div>
+
+      @if (filtering()) {
+        <button type="button" class="btn btn--ghost" (click)="clearFilters()">
+          <app-icon name="x" [size]="16" />
+          Clear filters
+        </button>
+        <span class="toolbar__hint">Drag and drop is paused while filters are on.</span>
+      }
+    </div>
+
+    <div class="scroller" cdkScrollable>
+      <div
+        class="columns"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        [cdkDropListData]="board.columns"
+        (cdkDropListDropped)="dropColumn($event)"
+      >
+        @for (column of board.columns; track column.id) {
+          <app-board-column
+            cdkDrag
+            [cdkDragDisabled]="filtering()"
+            [cdkDragStartDelay]="dragStartDelay"
+            [column]="column"
+            [labels]="board.labels"
+            [filter]="filter()"
+            [filtering]="filtering()"
+            [connectedTo]="listIds()"
+            (cardDropped)="dropCard($event)"
+            (cardOpened)="editingCardId.set($event)"
+            (cardAdded)="addCard(column.id, $event)"
+            (renamed)="renameColumn(column.id, $event)"
+            (removed)="removeColumn(column.id)"
+          />
+        }
+      </div>
+
+      <form class="add-column" (submit)="$event.preventDefault(); addColumn(newColumn)">
+        <label for="new-column" class="sr-only">New column name</label>
+        <input
+          #newColumn
+          id="new-column"
+          class="input"
+          placeholder="Add a column"
+          maxlength="40"
+          autocomplete="off"
+        />
+        <button type="submit" class="btn">
+          <app-icon name="plus" [size]="16" />
+          Add
+        </button>
+      </form>
+    </div>
+  </section>
+
+  @if (editing(); as editing) {
+    <app-card-dialog
+      [card]="editing.card"
+      [labels]="board.labels"
+      [columnTitle]="editing.columnTitle"
+      (saved)="saveCard(editing.card.id, $event)"
+      (deleted)="deleteCard(editing.card.id)"
+      (closed)="editingCardId.set(null)"
+    />
+  }
+}
