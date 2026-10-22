@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
+const CIRCLE = 'M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0';
+
 /** Stroke icons on a 24×24 grid (shapes adapted from Lucide, ISC license). */
 const ICONS = {
   plus: ['M12 5v14', 'M5 12h14'],
@@ -33,6 +35,7 @@ const ICONS = {
     'M16 7v9',
   ],
   'arrow-left': ['m12 19-7-7 7-7', 'M19 12H5'],
+  'arrow-right': ['M5 12h14', 'm12 5 7 7-7 7'],
   refresh: [
     'M3 12a9 9 0 0 1 15-6.7L21 8',
     'M21 3v5h-5',
@@ -40,6 +43,30 @@ const ICONS = {
     'M3 21v-5h5',
   ],
   code: ['m16 18 6-6-6-6', 'm8 6-6 6 6 6'],
+  circle: [CIRCLE],
+  'circle-check': [CIRCLE, 'm9 12 2 2 4-4'],
+  'circle-x': [CIRCLE, 'm15 9-6 6', 'm9 9 6 6'],
+  clock: [CIRCLE, 'M12 7v5l3 2'],
+  chart: ['M3 3v16a2 2 0 0 0 2 2h16', 'M18 17V9', 'M13 17V5', 'M8 17v-3'],
+  download: ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'M7 10l5 5 5-5', 'M12 15V3'],
+  upload: ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'M17 8l-5-5-5 5', 'M12 3v12'],
+  user: ['M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2', 'M8 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0'],
+  banknote: [
+    'M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z',
+    'M10 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0',
+    'M6 12h.01',
+    'M18 12h.01',
+  ],
+  bell: ['M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9', 'M10.3 21a1.94 1.94 0 0 0 3.4 0'],
+  lock: [
+    'M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z',
+    'M7 11V7a5 5 0 0 1 10 0v4',
+  ],
+  globe: [
+    'M2 12a10 10 0 1 0 20 0a10 10 0 1 0-20 0',
+    'M2 12h20',
+    'M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z',
+  ],
 } satisfies Record<string, string[]>;
 
 export type IconName = keyof typeof ICONS;

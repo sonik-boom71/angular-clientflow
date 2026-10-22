@@ -1,7 +1,7 @@
 {
-  "name": "taskflow",
-  "version": "1.0.0",
-  "description": "Kanban board built with Angular 21, signals and Angular CDK drag and drop.",
+  "name": "clientflow",
+  "version": "2.0.0",
+  "description": "Mini-CRM for freelancers built with Angular 21: signals, CDK drag and drop, runtime i18n (EN/UK).",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

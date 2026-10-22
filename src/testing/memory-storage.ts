@@ -17,28 +17,43 @@ export class MemoryStorage implements Pick<StorageService, 'load' | 'save'> {
 export function testCard(id: string, extra: Partial<Card> = {}): Card {
   return {
     id,
-    title: `Card ${id}`,
+    title: `Deal ${id}`,
+    client: '',
+    contact: '',
+    value: null,
     description: '',
     labelIds: [],
     dueDate: null,
     createdAt: '2026-01-01T00:00:00.000Z',
+    stageEnteredAt: '2026-01-01T00:00:00.000Z',
+    history: [{ columnId: 'c1', columnTitle: 'Leads', at: '2026-01-01T00:00:00.000Z' }],
     ...extra,
   };
 }
 
-/** Board "b1" with columns c1 (cards 1, 2, 3) and c2 (card 4). */
+/**
+ * Pipeline "b1" in USD: c1 Leads (deals 1, 2, 3), c2 Paid (deal 4, $1,000),
+ * c3 Lost (empty).
+ */
 export function testBoard(): Board {
   return {
     id: 'b1',
-    title: 'Test board',
+    title: 'Test pipeline',
+    currency: 'USD',
     createdAt: '2026-01-01T00:00:00.000Z',
     labels: [
-      { id: 'l1', name: 'Feature', color: 'blue' },
-      { id: 'l2', name: 'Bug', color: 'red' },
+      { id: 'l1', name: 'Website', color: 'blue' },
+      { id: 'l2', name: 'Urgent', color: 'red' },
     ],
     columns: [
-      { id: 'c1', title: 'To do', cards: [testCard('1'), testCard('2'), testCard('3')] },
-      { id: 'c2', title: 'Done', cards: [testCard('4')] },
+      {
+        id: 'c1',
+        title: 'Leads',
+        kind: 'open',
+        cards: [testCard('1'), testCard('2'), testCard('3')],
+      },
+      { id: 'c2', title: 'Paid', kind: 'won', cards: [testCard('4', { value: 1000 })] },
+      { id: 'c3', title: 'Lost', kind: 'lost', cards: [] },
     ],
   };
 }

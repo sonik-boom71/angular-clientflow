@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "taskflow": {
+    "clientflow": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -42,8 +42,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "6kB",
+                  "maximumError": "10kB"
                 }
               ],
               "outputHashing": "all"
@@ -60,10 +60,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "taskflow:build:production"
+              "buildTarget": "clientflow:build:production"
             },
             "development": {
-              "buildTarget": "taskflow:build:development"
+              "buildTarget": "clientflow:build:development"
             }
           },
           "defaultConfiguration": "development"

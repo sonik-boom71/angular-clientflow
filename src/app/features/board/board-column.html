@@ -4,14 +4,23 @@
       class="column__handle"
       cdkDragHandle
       [class.column__handle--off]="filtering()"
-      title="Drag to reorder"
+      [title]="'stage.dragHint' | t"
     >
       <app-icon name="grip" [size]="16" />
     </span>
+    <button
+      type="button"
+      class="column__kind"
+      [title]="kindTitle()"
+      [attr.aria-label]="kindTitle()"
+      (click)="cycleKind()"
+    >
+      <app-icon [name]="kindIcon()" [size]="16" />
+    </button>
     <app-inline-edit
       class="column__title"
       [value]="column().title"
-      label="Column name"
+      [label]="'stage.name' | t"
       [maxLength]="40"
       (saved)="renamed.emit($event)"
     />
@@ -25,12 +34,15 @@
     <button
       type="button"
       class="icon-btn icon-btn--danger"
-      [attr.aria-label]="'Delete column ' + column().title"
+      [attr.aria-label]="'stage.delete' | t: { name: column().title }"
       (click)="remove()"
     >
       <app-icon name="trash" [size]="16" />
     </button>
   </header>
+  @if (total()) {
+    <p class="column__total" [title]="'stage.total' | t">{{ total() | money: currency() }}</p>
+  }
 
   <div
     class="column__cards"
@@ -45,26 +57,31 @@
         cdkDrag
         [cdkDragData]="card.id"
         [cdkDragDisabled]="filtering()"
+        [cdkDragStartDelay]="dragStartDelay()"
         [card]="card"
         [labels]="labels()"
+        [kind]="column().kind"
+        [currency]="currency()"
         (opened)="cardOpened.emit(card.id)"
       />
     } @empty {
-      <p class="column__empty">{{ filtering() ? 'No matching cards' : 'No cards yet' }}</p>
+      <p class="column__empty">{{ (filtering() ? 'stage.noMatches' : 'stage.empty') | t }}</p>
     }
   </div>
 
   <form class="column__add" (submit)="$event.preventDefault(); addCard(newCard)">
-    <label class="sr-only" [for]="listId() + '-new'">New card in {{ column().title }}</label>
+    <label class="sr-only" [for]="listId() + '-new'">
+      {{ 'stage.newDealLabel' | t: { stage: column().title } }}
+    </label>
     <input
       #newCard
       class="input"
       [id]="listId() + '-new'"
-      placeholder="Add a card"
+      [placeholder]="'stage.addDeal' | t"
       maxlength="120"
       autocomplete="off"
     />
-    <button type="submit" class="icon-btn" aria-label="Add card">
+    <button type="submit" class="icon-btn" [attr.aria-label]="'stage.addDeal' | t">
       <app-icon name="plus" />
     </button>
   </form>

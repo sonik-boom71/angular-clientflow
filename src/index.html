@@ -2,14 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>TaskFlow · Kanban board built with Angular</title>
+    <title>ClientFlow · Mini-CRM for freelancers</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="TaskFlow is a Kanban board built with Angular 21: signals, standalone components, CDK drag and drop, reactive forms and lazy-loaded routes."
+      content="ClientFlow is a free mini-CRM for freelancers: track leads, proposals, projects and payments on one board, with earnings insights. No sign-up, works in your browser, English and Ukrainian."
     />
     <meta name="theme-color" content="#4f46e5" />
+    <meta property="og:title" content="ClientFlow · Mini-CRM for freelancers" />
+    <meta
+      property="og:description"
+      content="Track every client from first message to paid invoice. Free, no sign-up, English and Ukrainian."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/screenshots/pipeline-en-light.png" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,17 +25,21 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
     />
     <script>
-      // Apply the saved theme before Angular boots, so the page never flashes the wrong theme.
+      // Apply the saved theme and language before Angular boots, so nothing flashes.
       try {
-        var theme = JSON.parse(localStorage.getItem('taskflow:theme'));
+        var theme = JSON.parse(localStorage.getItem('clientflow:theme'));
         if (theme === 'light' || theme === 'dark') {
           document.documentElement.dataset.theme = theme;
+        }
+        var lang = JSON.parse(localStorage.getItem('clientflow:lang'));
+        if (lang === 'en' || lang === 'uk') {
+          document.documentElement.lang = lang;
         }
       } catch (e) {}
     </script>
   </head>
   <body>
     <app-root></app-root>
-    <noscript>TaskFlow needs JavaScript to run.</noscript>
+    <noscript>ClientFlow needs JavaScript to run.</noscript>
   </body>
 </html>

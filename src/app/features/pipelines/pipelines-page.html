@@ -1,0 +1,103 @@
+<section class="page">
+  <header class="page__head">
+    <div>
+      <h1 class="page__title">{{ 'pipelines.title' | t }}</h1>
+      <p class="page__subtitle">{{ 'pipelines.subtitle' | t: { count: store.boardCount() } }}</p>
+    </div>
+
+    <form class="create" [formGroup]="form" (ngSubmit)="create()">
+      <label for="new-board" class="sr-only">{{ 'pipelines.nameLabel' | t }}</label>
+      <input
+        id="new-board"
+        class="input"
+        formControlName="title"
+        maxlength="60"
+        autocomplete="off"
+        [placeholder]="'pipelines.newPlaceholder' | t"
+      />
+      <button type="submit" class="btn btn--primary">
+        <app-icon name="plus" />
+        {{ 'pipelines.create' | t }}
+      </button>
+    </form>
+  </header>
+
+  @if (summaries().length) {
+    <ul class="grid">
+      @for (board of summaries(); track board.id) {
+        <li class="tile">
+          <a class="tile__link" [routerLink]="['/board', board.id]">
+            <h2 class="tile__title">{{ board.title }}</h2>
+            <p class="tile__meta">
+              {{ 'pipelines.deals' | t: { count: board.dealCount } }} · {{ board.currency }}
+            </p>
+            <dl class="tile__money">
+              <div>
+                <dt class="sr-only">{{ 'kpi.open' | t }}</dt>
+                <dd>
+                  {{ 'pipelines.open' | t: { value: (board.openValue | money: board.currency) } }}
+                </dd>
+              </div>
+              <div>
+                <dt class="sr-only">{{ 'kpi.earned' | t }}</dt>
+                <dd class="tile__earned">
+                  {{ 'pipelines.earned' | t: { value: (board.wonValue | money: board.currency) } }}
+                </dd>
+              </div>
+            </dl>
+            @if (board.overdueCount + board.idleCount; as attention) {
+              <p class="tile__attention">
+                <app-icon name="bell" [size]="14" />
+                {{ 'pipelines.attention' | t: { count: attention } }}
+              </p>
+            }
+          </a>
+          <button
+            type="button"
+            class="icon-btn icon-btn--danger tile__delete"
+            [attr.aria-label]="'pipelines.delete' | t: { name: board.title }"
+            (click)="remove(board)"
+          >
+            <app-icon name="trash" />
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="empty">
+      <app-icon name="kanban" [size]="40" />
+      <h2>{{ 'pipelines.emptyTitle' | t }}</h2>
+      <p>{{ 'pipelines.emptyBody' | t }}</p>
+      <button type="button" class="btn" (click)="store.resetToDemo()">
+        <app-icon name="refresh" />
+        {{ 'pipelines.loadDemo' | t }}
+      </button>
+    </div>
+  }
+
+  <footer class="page__foot">
+    <button type="button" class="btn btn--ghost" (click)="exportBackup()">
+      <app-icon name="download" [size]="16" />
+      {{ 'pipelines.export' | t }}
+    </button>
+    <label class="btn btn--ghost" for="import-backup">
+      <app-icon name="upload" [size]="16" />
+      {{ 'pipelines.import' | t }}
+    </label>
+    <input
+      #importInput
+      id="import-backup"
+      type="file"
+      accept="application/json,.json"
+      class="sr-only"
+      (change)="importBackup(importInput)"
+    />
+    <button type="button" class="btn btn--ghost" (click)="resetDemo()">
+      <app-icon name="refresh" [size]="16" />
+      {{ 'pipelines.resetDemo' | t }}
+    </button>
+  </footer>
+  @if (status(); as status) {
+    <p class="status" [class.status--error]="!status.ok" role="status">{{ status.message | t }}</p>
+  }
+</section>

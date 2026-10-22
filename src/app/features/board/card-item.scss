@@ -5,7 +5,7 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   padding: 12px;
   border: 1px solid var(--border);
@@ -21,10 +21,6 @@
   }
 }
 
-:host(.cdk-drag-disabled) .card {
-  cursor: pointer;
-}
-
 :host(:not(.cdk-drag-disabled)) .card:active {
   cursor: grabbing;
 }
@@ -33,28 +29,50 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  margin-bottom: 2px;
 }
 
 .card__title {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.4;
   overflow-wrap: anywhere;
 }
 
-.card__meta {
-  display: flex;
+.card__client {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
-.card__has-text {
+.card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 12px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.card__value {
+  margin-right: auto;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.card__notes {
   display: inline-flex;
 }
 
-.due {
+.chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -69,7 +87,8 @@
   }
 
   &--today,
-  &--soon {
+  &--soon,
+  &--idle {
     background: var(--warning-soft);
     color: var(--warning);
     font-weight: 500;

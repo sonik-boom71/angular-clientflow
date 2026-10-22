@@ -4,51 +4,83 @@ import {
   ElementRef,
   OnInit,
   afterNextRender,
+  computed,
+  inject,
   input,
   output,
   viewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import { I18n } from '../../core/i18n/i18n.service';
+import { LocalDatePipe, TranslatePipe } from '../../core/i18n/pipes';
 import { Card, CardChanges, Label } from '../../core/models/board.model';
 import { Icon } from '../../shared/ui/icon';
 import { notBlank } from '../../shared/validators';
 
 export const TITLE_MAX = 120;
-export const DESCRIPTION_MAX = 1000;
+export const TEXT_MAX = 120;
+export const NOTES_MAX = 2000;
 
-/** Card editor in a native <dialog>: focus trapping, Escape and the backdrop come for free. */
+/** Deal editor in a native <dialog>: focus trapping, Escape and the backdrop come for free. */
 @Component({
   selector: 'app-card-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, Icon],
+  imports: [ReactiveFormsModule, Icon, LocalDatePipe, TranslatePipe],
   templateUrl: './card-dialog.html',
   styleUrl: './card-dialog.scss',
 })
 export class CardDialog implements OnInit {
+  private readonly i18n = inject(I18n);
+
   readonly card = input.required<Card>();
   readonly labels = input<Label[]>([]);
   readonly columnTitle = input('');
+  readonly currency = input('USD');
 
   readonly saved = output<CardChanges>();
   readonly deleted = output();
   readonly closed = output();
 
   protected readonly titleMax = TITLE_MAX;
-  protected readonly descriptionMax = DESCRIPTION_MAX;
+  protected readonly textMax = TEXT_MAX;
+  protected readonly notesMax = NOTES_MAX;
 
   protected readonly form = new FormGroup({
     title: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, notBlank, Validators.maxLength(TITLE_MAX)],
     }),
-    description: new FormControl('', {
+    client: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.maxLength(DESCRIPTION_MAX)],
+      validators: [Validators.maxLength(TEXT_MAX)],
+    }),
+    contact: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.maxLength(TEXT_MAX)],
+    }),
+    value: new FormControl<number | null>(null, {
+      validators: [Validators.min(0), Validators.max(100_000_000)],
     }),
     dueDate: new FormControl('', { nonNullable: true }),
     labelIds: new FormControl<string[]>([], { nonNullable: true }),
+    description: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.maxLength(NOTES_MAX)],
+    }),
   });
+
+  /** Newest first, as "Created in …" / "Moved to …" lines. */
+  protected readonly history = computed(() =>
+    this.card()
+      .history.map((event, index) => ({
+        at: event.at,
+        text: this.i18n.t(index === 0 ? 'dialog.historyCreated' : 'dialog.historyMoved', {
+          stage: event.columnTitle,
+        }),
+      }))
+      .reverse(),
+  );
 
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 
@@ -68,9 +100,12 @@ export class CardDialog implements OnInit {
     const card = this.card();
     this.form.setValue({
       title: card.title,
-      description: card.description,
+      client: card.client,
+      contact: card.contact,
+      value: card.value,
       dueDate: card.dueDate ?? '',
       labelIds: [...card.labelIds],
+      description: card.description,
     });
   }
 
@@ -92,18 +127,22 @@ export class CardDialog implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
-    const { title, description, dueDate, labelIds } = this.form.getRawValue();
+    const { title, client, contact, value, dueDate, labelIds, description } =
+      this.form.getRawValue();
     this.saved.emit({
       title: title.trim(),
-      description: description.trim(),
+      client: client.trim(),
+      contact: contact.trim(),
+      value: typeof value === 'number' && Number.isFinite(value) ? value : null,
       dueDate: dueDate || null,
       labelIds,
+      description: description.trim(),
     });
     this.close();
   }
 
   protected remove(): void {
-    if (confirm(`Delete "${this.card().title}"?`)) {
+    if (confirm(this.i18n.t('dialog.confirmDelete', { name: this.card().title }))) {
       this.deleted.emit();
       this.close();
     }

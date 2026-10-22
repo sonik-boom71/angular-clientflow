@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { testBoard, testCard } from '../../../testing/memory-storage';
+import { MemoryStorage, testBoard, testCard } from '../../../testing/memory-storage';
 import { CardChanges } from '../../core/models/board.model';
+import { StorageService } from '../../core/services/storage.service';
 import { CardDialog } from './card-dialog';
 
 describe('CardDialog', () => {
@@ -10,12 +11,26 @@ describe('CardDialog', () => {
   let saved: CardChanges[];
 
   beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: StorageService, useValue: new MemoryStorage() }],
+    });
     fixture = TestBed.createComponent(CardDialog);
     fixture.componentRef.setInput(
       'card',
-      testCard('1', { title: 'Write docs', description: 'README', labelIds: ['l1'] }),
+      testCard('1', {
+        title: 'Landing page',
+        client: 'Brew & Co',
+        value: 900,
+        description: 'Menu and booking form',
+        labelIds: ['l1'],
+        history: [
+          { columnId: 'c1', columnTitle: 'Leads', at: '2026-10-01T10:00:00.000Z' },
+          { columnId: 'c2', columnTitle: 'Proposal sent', at: '2026-10-05T10:00:00.000Z' },
+        ],
+      }),
     );
     fixture.componentRef.setInput('labels', testBoard().labels);
+    fixture.componentRef.setInput('columnTitle', 'Proposal sent');
     saved = [];
     fixture.componentInstance.saved.subscribe((changes) => saved.push(changes));
     await fixture.whenStable();
@@ -36,11 +51,20 @@ describe('CardDialog', () => {
     await fixture.whenStable();
   }
 
-  it('fills the form from the card', () => {
-    expect(input('#card-title').value).toBe('Write docs');
-    expect(element.querySelector('textarea')!.value).toBe('README');
-    const checkboxes = element.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
-    expect([...checkboxes].map((box) => box.checked)).toEqual([true, false]);
+  it('fills the form from the deal', () => {
+    expect(input('#card-title').value).toBe('Landing page');
+    expect(input('#card-client').value).toBe('Brew & Co');
+    expect(input('#card-value').value).toBe('900');
+    expect(element.querySelector('textarea')!.value).toBe('Menu and booking form');
+    const boxes = element.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+    expect([...boxes].map((box) => box.checked)).toEqual([true, false]);
+  });
+
+  it('shows the activity log, newest first', () => {
+    const items = [...element.querySelectorAll('.history__list li span')].map((item) =>
+      item.textContent?.trim(),
+    );
+    expect(items).toEqual(['Moved to Proposal sent', 'Created in Leads']);
   });
 
   it('blocks saving a blank title and explains why', async () => {
@@ -48,28 +72,42 @@ describe('CardDialog', () => {
     await submit();
 
     expect(saved).toEqual([]);
-    expect(element.querySelector('[role="alert"]')?.textContent).toContain('Enter a title.');
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain('Enter a project name.');
+  });
+
+  it('blocks a negative amount', async () => {
+    type('#card-value', '-10');
+    await submit();
+
+    expect(saved).toEqual([]);
+    expect(element.textContent).toContain('Enter an amount of 0 or more.');
   });
 
   it('emits trimmed changes on save', async () => {
-    type('#card-title', '  Write the README  ');
+    type('#card-title', '  Landing page v2  ');
+    type('#card-contact', ' hello@brew.example ');
+    type('#card-value', '1250');
     type('#card-due', '2026-11-05');
     element.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')[1].click();
     await submit();
 
     expect(saved).toEqual([
       {
-        title: 'Write the README',
-        description: 'README',
+        title: 'Landing page v2',
+        client: 'Brew & Co',
+        contact: 'hello@brew.example',
+        value: 1250,
         dueDate: '2026-11-05',
         labelIds: ['l1', 'l2'],
+        description: 'Menu and booking form',
       },
     ]);
   });
 
-  it('saves an empty date as no deadline', async () => {
+  it('saves an empty amount and date as "not set"', async () => {
+    type('#card-value', '');
     type('#card-due', '');
     await submit();
-    expect(saved[0].dueDate).toBeNull();
+    expect(saved[0]).toMatchObject({ value: null, dueDate: null });
   });
 });

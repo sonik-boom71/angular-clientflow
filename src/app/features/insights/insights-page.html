@@ -1,0 +1,81 @@
+@if (board(); as board) {
+  <section class="page">
+    <header class="page__head">
+      <a
+        class="icon-btn"
+        [routerLink]="['/board', board.id]"
+        [attr.aria-label]="'insights.back' | t"
+        [title]="'insights.back' | t"
+      >
+        <app-icon name="arrow-left" />
+      </a>
+      <div>
+        <h1 class="page__title">{{ 'insights.title' | t }}</h1>
+        <p class="page__subtitle">{{ board.title }} · {{ board.currency }}</p>
+      </div>
+    </header>
+
+    @if (summary(); as summary) {
+      <app-kpi-strip [summary]="summary" [showAverage]="true" />
+    }
+
+    <div class="panels">
+      <section class="panel" aria-labelledby="by-stage-title">
+        <h2 id="by-stage-title" class="panel__title">{{ 'insights.byStage' | t }}</h2>
+        <ul class="stages">
+          @for (stage of stages(); track stage.columnId) {
+            <li class="stage">
+              <span class="stage__name">{{ stage.title }}</span>
+              <span class="stage__track" aria-hidden="true">
+                <span
+                  class="stage__bar stage__bar--{{ stage.kind }}"
+                  [style.width.%]="stage.share"
+                ></span>
+              </span>
+              <span class="stage__value">
+                {{ stage.value | money: board.currency }}
+                <span class="muted">· {{ stage.count }}</span>
+              </span>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <section class="panel" aria-labelledby="by-month-title">
+        <h2 id="by-month-title" class="panel__title">{{ 'insights.byMonth' | t }}</h2>
+        <p class="panel__hint">{{ 'insights.byMonthHint' | t }}</p>
+        <ol class="months">
+          @for (month of months(); track month.month.getTime()) {
+            <li class="month">
+              <span class="month__value">
+                {{ month.value ? (month.value | money: board.currency : true) : '' }}
+              </span>
+              <span class="month__track" aria-hidden="true">
+                <span class="month__bar" [style.height.%]="month.share"></span>
+              </span>
+              <span class="month__name">{{ month.month | localDate: 'month' }}</span>
+              <span class="sr-only">{{ month.value | money: board.currency }}</span>
+            </li>
+          }
+        </ol>
+      </section>
+
+      <section class="panel" aria-labelledby="clients-title">
+        <h2 id="clients-title" class="panel__title">{{ 'insights.topClients' | t }}</h2>
+        @if (clients().length) {
+          <ol class="clients">
+            @for (client of clients(); track client.client) {
+              <li class="client">
+                <span class="client__name">{{ client.client }}</span>
+                <span class="muted">{{ 'pipelines.deals' | t: { count: client.count } }}</span>
+                <span class="client__value">{{ client.value | money: board.currency }}</span>
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="panel__hint">{{ 'insights.noClients' | t }}</p>
+        }
+      </section>
+    </div>
+  </section>
+}

@@ -30,13 +30,13 @@ describe('boardExistsGuard', () => {
       ),
     );
 
-  it('lets the user open an existing board', () => {
+  it('lets the user open an existing pipeline', () => {
     expect(run('b1')).toBe(true);
   });
 
-  it('redirects to the boards list when the board is missing', () => {
+  it('redirects to the pipelines list when the pipeline is missing', () => {
     const result = run('missing');
     expect(result).toBeInstanceOf(UrlTree);
-    expect(TestBed.inject(Router).serializeUrl(result as UrlTree)).toBe('/');
+    expect(TestBed.inject(Router).serializeUrl(result as UrlTree)).toBe('/pipelines');
   });
 });

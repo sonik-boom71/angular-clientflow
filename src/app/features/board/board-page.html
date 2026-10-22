@@ -1,43 +1,74 @@
 @if (board(); as board) {
   <section class="board">
     <header class="board__head">
-      <a routerLink="/" class="icon-btn" aria-label="Back to boards" title="Back to boards">
+      <a
+        routerLink="/pipelines"
+        class="icon-btn"
+        [attr.aria-label]="'board.back' | t"
+        [title]="'board.back' | t"
+      >
         <app-icon name="arrow-left" />
       </a>
       <h1 class="board__title">
         <app-inline-edit
           [value]="board.title"
-          label="Board name"
+          [label]="'board.name' | t"
           [maxLength]="60"
           (saved)="renameBoard($event)"
         />
       </h1>
-      @if (summary(); as summary) {
-        <span class="board__stats">
-          {{ summary.cardCount }} cards · {{ summary.progress }}% done
-          @if (summary.overdueCount) {
-            <span class="board__overdue">· {{ summary.overdueCount }} overdue</span>
-          }
-        </span>
-      }
+      <label class="sr-only" for="board-currency">{{ 'board.currency' | t }}</label>
+      <select
+        id="board-currency"
+        class="input currency"
+        [value]="board.currency"
+        (change)="setCurrency(currency.value)"
+        #currency
+      >
+        @for (code of currencies; track code) {
+          <option [value]="code" [selected]="code === board.currency">{{ code }}</option>
+        }
+      </select>
       <span class="board__spacer"></span>
-      <button type="button" class="btn btn--ghost" (click)="deleteBoard()">
-        <app-icon name="trash" [size]="16" />
-        <span class="hide-sm">Delete board</span>
+      <a class="btn" [routerLink]="['/board', board.id, 'insights']">
+        <app-icon name="chart" [size]="16" />
+        <span class="hide-sm">{{ 'board.insights' | t }}</span>
+      </a>
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [title]="'board.exportCsv' | t"
+        (click)="exportCsv()"
+      >
+        <app-icon name="download" [size]="16" />
+        <span class="hide-md">{{ 'board.exportCsv' | t }}</span>
+      </button>
+      <button
+        type="button"
+        class="icon-btn icon-btn--danger"
+        [attr.aria-label]="'board.delete' | t"
+        [title]="'board.delete' | t"
+        (click)="deleteBoard()"
+      >
+        <app-icon name="trash" />
       </button>
     </header>
+
+    @if (summary(); as summary) {
+      <app-kpi-strip class="board__kpis" [summary]="summary" />
+    }
 
     <div class="toolbar">
       <div class="search">
         <app-icon name="search" [size]="16" />
-        <label for="board-search" class="sr-only">Search cards</label>
+        <label for="board-search" class="sr-only">{{ 'board.search' | t }}</label>
         <input
           #search
           id="board-search"
           type="search"
           class="input"
-          placeholder="Search cards"
           autocomplete="off"
+          [placeholder]="'board.search' | t"
           [value]="query()"
           (input)="query.set(search.value)"
         />
@@ -46,7 +77,7 @@
         }
       </div>
 
-      <div class="filters" role="group" aria-label="Filter by label">
+      <div class="filters" role="group" [attr.aria-label]="'board.filterByLabel' | t">
         @for (label of board.labels; track label.id) {
           <button
             type="button"
@@ -63,9 +94,9 @@
       @if (filtering()) {
         <button type="button" class="btn btn--ghost" (click)="clearFilters()">
           <app-icon name="x" [size]="16" />
-          Clear filters
+          {{ 'board.clearFilters' | t }}
         </button>
-        <span class="toolbar__hint">Drag and drop is paused while filters are on.</span>
+        <span class="toolbar__hint">{{ 'board.dragPaused' | t }}</span>
       }
     </div>
 
@@ -84,31 +115,34 @@
             [cdkDragStartDelay]="dragStartDelay"
             [column]="column"
             [labels]="board.labels"
+            [currency]="board.currency"
             [filter]="filter()"
             [filtering]="filtering()"
             [connectedTo]="listIds()"
+            [dragStartDelay]="dragStartDelay"
             (cardDropped)="dropCard($event)"
             (cardOpened)="editingCardId.set($event)"
             (cardAdded)="addCard(column.id, $event)"
             (renamed)="renameColumn(column.id, $event)"
+            (kindChanged)="setColumnKind(column.id, $event)"
             (removed)="removeColumn(column.id)"
           />
         }
       </div>
 
       <form class="add-column" (submit)="$event.preventDefault(); addColumn(newColumn)">
-        <label for="new-column" class="sr-only">New column name</label>
+        <label for="new-column" class="sr-only">{{ 'board.newStageLabel' | t }}</label>
         <input
           #newColumn
           id="new-column"
           class="input"
-          placeholder="Add a column"
           maxlength="40"
           autocomplete="off"
+          [placeholder]="'board.addStage' | t"
         />
         <button type="submit" class="btn">
           <app-icon name="plus" [size]="16" />
-          Add
+          {{ 'common.add' | t }}
         </button>
       </form>
     </div>
@@ -119,6 +153,7 @@
       [card]="editing.card"
       [labels]="board.labels"
       [columnTitle]="editing.columnTitle"
+      [currency]="board.currency"
       (saved)="saveCard(editing.card.id, $event)"
       (deleted)="deleteCard(editing.card.id)"
       (closed)="editingCardId.set(null)"
