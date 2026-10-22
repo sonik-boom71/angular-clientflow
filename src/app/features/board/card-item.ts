@@ -1,22 +1,24 @@
-import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
-import { Card, Label } from '../../core/models/board.model';
-import { DueStatus, getDueStatus } from '../../core/utils/due-status';
+import { LocalDatePipe, MoneyPipe, TranslatePipe } from '../../core/i18n/pipes';
+import { TranslationKey } from '../../core/i18n/translations';
+import { Card, Label, StageKind } from '../../core/models/board.model';
+import { getDealHealth } from '../../core/utils/deal-health';
+import { DueStatus } from '../../core/utils/due-status';
 import { Icon } from '../../shared/ui/icon';
 
-const DUE_HINTS: Record<DueStatus, string> = {
-  none: '',
-  overdue: 'Overdue',
-  today: 'Due today',
-  soon: 'Due soon',
-  later: 'Due',
+const DUE_HINTS: Record<DueStatus, TranslationKey | null> = {
+  none: null,
+  overdue: 'deal.overdue',
+  today: 'deal.dueToday',
+  soon: 'deal.dueSoon',
+  later: 'deal.due',
 };
 
 @Component({
   selector: 'app-card-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, Icon],
+  imports: [Icon, LocalDatePipe, MoneyPipe, TranslatePipe],
   styleUrl: './card-item.scss',
   template: `
     <button type="button" class="card" (click)="opened.emit()">
@@ -29,30 +31,49 @@ const DUE_HINTS: Record<DueStatus, string> = {
       }
 
       <span class="card__title">{{ card().title }}</span>
-
-      @if (card().dueDate || card().description) {
-        <span class="card__meta">
-          @if (card().dueDate) {
-            <span class="due due--{{ dueStatus() }}" [title]="dueHint()">
-              <app-icon name="calendar" [size]="14" />
-              {{ card().dueDate | date: 'MMM d' }}
-              <span class="sr-only">{{ dueHint() }}</span>
-            </span>
-          }
-          @if (card().description) {
-            <span class="card__has-text" title="Has a description">
-              <app-icon name="text" [size]="14" />
-              <span class="sr-only">Has a description</span>
-            </span>
-          }
+      @if (card().client) {
+        <span class="card__client">
+          <app-icon name="user" [size]="13" />
+          {{ card().client }}
         </span>
       }
+
+      <span class="card__meta">
+        @if (card().value !== null) {
+          <span class="card__value">{{ card().value | money: currency() }}</span>
+        }
+        @if (card().dueDate) {
+          @let hint = dueHint();
+          <span class="chip chip--{{ health().due }}" [title]="hint ? (hint | t) : ''">
+            <app-icon name="calendar" [size]="13" />
+            {{ card().dueDate | localDate }}
+            @if (hint) {
+              <span class="sr-only">{{ hint | t }}</span>
+            }
+          </span>
+        }
+        @if (health().idleDays; as days) {
+          <span class="chip chip--idle" [title]="'deal.idleHint' | t: { count: days }">
+            <app-icon name="clock" [size]="13" />
+            {{ 'deal.idle' | t: { count: days } }}
+            <span class="sr-only">{{ 'deal.idleHint' | t: { count: days } }}</span>
+          </span>
+        }
+        @if (card().description) {
+          <span class="card__notes" [title]="'deal.hasNotes' | t">
+            <app-icon name="text" [size]="14" />
+            <span class="sr-only">{{ 'deal.hasNotes' | t }}</span>
+          </span>
+        }
+      </span>
     </button>
   `,
 })
 export class CardItem {
   readonly card = input.required<Card>();
   readonly labels = input<Label[]>([]);
+  readonly kind = input<StageKind>('open');
+  readonly currency = input('USD');
   readonly opened = output();
 
   protected readonly cardLabels = computed(() => {
@@ -60,6 +81,6 @@ export class CardItem {
     return this.labels().filter((label) => ids.includes(label.id));
   });
 
-  protected readonly dueStatus = computed(() => getDueStatus(this.card().dueDate));
-  protected readonly dueHint = computed(() => DUE_HINTS[this.dueStatus()]);
+  protected readonly health = computed(() => getDealHealth(this.card(), this.kind()));
+  protected readonly dueHint = computed(() => DUE_HINTS[this.health().due]);
 }

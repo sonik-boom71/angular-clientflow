@@ -12,13 +12,13 @@ export function isFilterActive(filter: CardFilter): boolean {
 }
 
 /**
- * A card matches when its title or description contains the query (case-insensitive)
- * and it carries every selected label.
+ * A deal matches when its project, client, contact or notes contain the query
+ * (case-insensitive) and it carries every selected label.
  */
 export function matchesFilter(card: Card, filter: CardFilter): boolean {
   const query = filter.query.trim().toLowerCase();
   if (query) {
-    const text = `${card.title} ${card.description}`.toLowerCase();
+    const text = [card.title, card.client, card.contact, card.description].join(' ').toLowerCase();
     if (!text.includes(query)) {
       return false;
     }

@@ -11,15 +11,24 @@
   flex-direction: column;
   min-height: 0;
   max-height: 100%;
+  border-top: 3px solid transparent;
   border-radius: var(--radius);
   background: var(--column);
+}
+
+:host(.kind-won) .column {
+  border-top-color: var(--success);
+}
+
+:host(.kind-lost) .column {
+  border-top-color: var(--border-strong);
 }
 
 .column__header {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px 8px 4px;
+  gap: 2px;
+  padding: 6px 8px 0;
   font-size: 14px;
   font-weight: 600;
 }
@@ -33,6 +42,24 @@
   &--off {
     visibility: hidden;
   }
+}
+
+.column__kind {
+  display: inline-flex;
+  padding: 4px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--surface);
+  }
+}
+
+:host(.kind-won) .column__kind {
+  color: var(--success);
 }
 
 .column__title {
@@ -50,12 +77,23 @@
   text-align: center;
 }
 
+.column__total {
+  padding: 0 14px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+:host(.kind-won) .column__total {
+  color: var(--success);
+}
+
 .column__cards {
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-height: 64px;
-  padding: 4px 8px 8px;
+  padding: 8px;
   overflow-y: auto;
 }
 

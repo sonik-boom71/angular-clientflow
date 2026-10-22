@@ -9,52 +9,82 @@
   <form class="dialog__body" [formGroup]="form" (ngSubmit)="save()">
     <header class="dialog__head">
       <div>
-        <h2 id="card-dialog-title" class="dialog__title">Edit card</h2>
+        <h2 id="card-dialog-title" class="dialog__title">{{ 'dialog.title' | t }}</h2>
         @if (columnTitle()) {
-          <p class="dialog__subtitle">in {{ columnTitle() }}</p>
+          <p class="dialog__subtitle">{{ 'dialog.inStage' | t: { stage: columnTitle() } }}</p>
         }
       </div>
-      <button type="button" class="icon-btn" aria-label="Close" (click)="close()">
+      <button
+        type="button"
+        class="icon-btn"
+        [attr.aria-label]="'common.close' | t"
+        (click)="close()"
+      >
         <app-icon name="x" />
       </button>
     </header>
 
     <div class="field">
-      <label for="card-title">Title</label>
+      <label for="card-title">{{ 'field.title' | t }}</label>
       <input id="card-title" class="input" formControlName="title" autocomplete="off" />
       @let title = form.controls.title;
       @if (title.touched && title.invalid) {
         <p class="field__error" role="alert">
           @if (title.hasError('maxlength')) {
-            Keep the title under {{ titleMax }} characters.
+            {{ 'error.tooLong' | t: { max: titleMax } }}
           } @else {
-            Enter a title.
+            {{ 'error.titleRequired' | t }}
           }
         </p>
       }
     </div>
 
-    <div class="field">
-      <label for="card-description">Description</label>
-      <textarea
-        id="card-description"
-        class="input"
-        formControlName="description"
-        placeholder="Add details, links or acceptance criteria"
-      ></textarea>
-      @let description = form.controls.description;
-      <p class="field__hint" [class.field__error]="description.invalid">
-        {{ description.value.length }}/{{ descriptionMax }}
-      </p>
-    </div>
-
-    <div class="field field--short">
-      <label for="card-due">Due date</label>
-      <input id="card-due" type="date" class="input" formControlName="dueDate" />
+    <div class="grid">
+      <div class="field">
+        <label for="card-client">{{ 'field.client' | t }}</label>
+        <input
+          id="card-client"
+          class="input"
+          formControlName="client"
+          autocomplete="off"
+          [placeholder]="'field.clientPlaceholder' | t"
+        />
+      </div>
+      <div class="field">
+        <label for="card-contact">{{ 'field.contact' | t }}</label>
+        <input
+          id="card-contact"
+          class="input"
+          formControlName="contact"
+          autocomplete="off"
+          [placeholder]="'field.contactPlaceholder' | t"
+        />
+      </div>
+      <div class="field">
+        <label for="card-value">{{ 'field.value' | t }}, {{ currency() }}</label>
+        <input
+          id="card-value"
+          class="input"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="any"
+          formControlName="value"
+          placeholder="0"
+        />
+        @let value = form.controls.value;
+        @if (value.touched && value.invalid) {
+          <p class="field__error" role="alert">{{ 'error.valueInvalid' | t }}</p>
+        }
+      </div>
+      <div class="field">
+        <label for="card-due">{{ 'field.due' | t }}</label>
+        <input id="card-due" type="date" class="input" formControlName="dueDate" />
+      </div>
     </div>
 
     <fieldset class="field labels">
-      <legend>Labels</legend>
+      <legend>{{ 'field.labels' | t }}</legend>
       <div class="labels__list">
         @for (label of labels(); track label.id) {
           <label class="labels__item" [class.labels__item--on]="hasLabel(label.id)">
@@ -70,14 +100,42 @@
       </div>
     </fieldset>
 
+    <div class="field">
+      <label for="card-notes">{{ 'field.notes' | t }}</label>
+      <textarea
+        id="card-notes"
+        class="input"
+        formControlName="description"
+        [placeholder]="'field.notesPlaceholder' | t"
+      ></textarea>
+      @let notes = form.controls.description;
+      <p class="field__hint" [class.field__error]="notes.invalid">
+        {{ notes.value.length }}/{{ notesMax }}
+      </p>
+    </div>
+
+    @if (history().length) {
+      <section class="history" aria-labelledby="card-history-title">
+        <h3 id="card-history-title" class="history__title">{{ 'dialog.history' | t }}</h3>
+        <ol class="history__list">
+          @for (event of history(); track $index) {
+            <li>
+              <span>{{ event.text }}</span>
+              <time [attr.datetime]="event.at">{{ event.at | localDate: 'medium' }}</time>
+            </li>
+          }
+        </ol>
+      </section>
+    }
+
     <footer class="dialog__foot">
       <button type="button" class="btn btn--danger" (click)="remove()">
         <app-icon name="trash" [size]="16" />
-        Delete
+        {{ 'common.delete' | t }}
       </button>
       <span class="dialog__spacer"></span>
-      <button type="button" class="btn" (click)="close()">Cancel</button>
-      <button type="submit" class="btn btn--primary">Save</button>
+      <button type="button" class="btn" (click)="close()">{{ 'common.cancel' | t }}</button>
+      <button type="submit" class="btn btn--primary">{{ 'common.save' | t }}</button>
     </footer>
   </form>
 </dialog>

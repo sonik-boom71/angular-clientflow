@@ -1,5 +1,5 @@
 .dialog {
-  width: min(560px, calc(100vw - 32px));
+  width: min(620px, calc(100vw - 32px));
   max-height: calc(100vh - 32px);
   padding: 0;
   border: 1px solid var(--border);
@@ -38,6 +38,12 @@
   font-size: 13px;
 }
 
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -52,10 +58,6 @@
     padding: 0;
     font-size: 13px;
     font-weight: 600;
-  }
-
-  &--short {
-    max-width: 220px;
   }
 }
 
@@ -96,6 +98,38 @@
   }
 }
 
+.history {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.history__title {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.history__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  time {
+    flex: none;
+    color: var(--text-muted);
+  }
+}
+
 .dialog__foot {
   display: flex;
   gap: 8px;
@@ -109,5 +143,9 @@
 @media (max-width: 480px) {
   .dialog__body {
     padding: 16px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

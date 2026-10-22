@@ -14,12 +14,23 @@ import {
 import { Title } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
 
-import { CardChanges, Column } from '../../core/models/board.model';
+import { I18n } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/pipes';
+import {
+  CURRENCIES,
+  CardChanges,
+  Column,
+  Currency,
+  StageKind,
+} from '../../core/models/board.model';
 import { BoardStore } from '../../core/services/board-store';
+import { DownloadService } from '../../core/services/download.service';
 import { summarizeBoard } from '../../core/utils/board-stats';
 import { CardFilter, isFilterActive } from '../../core/utils/card-filter';
+import { boardToCsv, fileSlug } from '../../core/utils/export';
 import { Icon } from '../../shared/ui/icon';
 import { InlineEdit } from '../../shared/ui/inline-edit';
+import { KpiStrip } from '../../shared/ui/kpi-strip';
 import { BoardColumn, columnListId } from './board-column';
 import { CardDialog } from './card-dialog';
 
@@ -38,6 +49,8 @@ const DRAG_START_DELAY = { touch: 200, mouse: 0 };
     CardDialog,
     Icon,
     InlineEdit,
+    KpiStrip,
+    TranslatePipe,
   ],
   templateUrl: './board-page.html',
   styleUrl: './board-page.scss',
@@ -50,8 +63,11 @@ export class BoardPage {
   private readonly store = inject(BoardStore);
   private readonly router = inject(Router);
   private readonly title = inject(Title);
+  private readonly i18n = inject(I18n);
+  private readonly download = inject(DownloadService);
   private readonly search = viewChild<ElementRef<HTMLInputElement>>('search');
 
+  protected readonly currencies = CURRENCIES;
   protected readonly dragStartDelay = DRAG_START_DELAY;
   protected readonly board = computed(() => this.store.boards().find((b) => b.id === this.id()));
   protected readonly summary = computed(() => {
@@ -87,7 +103,7 @@ export class BoardPage {
     effect(() => {
       const board = this.board();
       if (board) {
-        this.title.setTitle(`${board.title} · TaskFlow`);
+        this.title.setTitle(this.i18n.t('title.board', { name: board.title }));
       }
     });
   }
@@ -96,11 +112,22 @@ export class BoardPage {
     this.store.renameBoard(this.id(), title);
   }
 
+  protected setCurrency(currency: string): void {
+    this.store.setCurrency(this.id(), currency as Currency);
+  }
+
   protected deleteBoard(): void {
     const board = this.board();
-    if (board && confirm(`Delete "${board.title}" and all its cards? This can't be undone.`)) {
+    if (board && confirm(this.i18n.t('pipelines.confirmDelete', { name: board.title }))) {
       this.store.deleteBoard(board.id);
-      this.router.navigate(['/']);
+      this.router.navigate(['/pipelines']);
+    }
+  }
+
+  protected exportCsv(): void {
+    const board = this.board();
+    if (board) {
+      this.download.save(`${fileSlug(board.title)}.csv`, boardToCsv(board), 'text/csv');
     }
   }
 
@@ -113,6 +140,10 @@ export class BoardPage {
 
   protected renameColumn(columnId: string, title: string): void {
     this.store.renameColumn(this.id(), columnId, title);
+  }
+
+  protected setColumnKind(columnId: string, kind: StageKind): void {
+    this.store.setColumnKind(this.id(), columnId, kind);
   }
 
   protected removeColumn(columnId: string): void {

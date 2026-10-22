@@ -27,12 +27,7 @@ import {
         (blur)="commit(field.value)"
       />
     } @else {
-      <button
-        type="button"
-        class="inline-edit__text"
-        [title]="'Rename ' + label().toLowerCase()"
-        (click)="start()"
-      >
+      <button type="button" class="inline-edit__text" [title]="label()" (click)="start()">
         {{ value() }}
       </button>
     }
