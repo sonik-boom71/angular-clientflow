@@ -5,10 +5,6 @@ import { RouterStateSnapshot, TitleStrategy } from '@angular/router';
 import { I18n } from './i18n.service';
 import { TranslationKey } from './translations';
 
-/**
- * Route `title`s are translation keys. The title updates on navigation and again
- * when the language changes. Pages without a route title set their own.
- */
 @Injectable({ providedIn: 'root' })
 export class TranslatedTitleStrategy extends TitleStrategy {
   private readonly title = inject(Title);

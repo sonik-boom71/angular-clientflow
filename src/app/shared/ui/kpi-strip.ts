@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { MoneyPipe, TranslatePipe } from '../../core/i18n/pipes';
 import { BoardSummary } from '../../core/utils/board-stats';
 
-/** The four numbers a freelancer checks first: open pipeline, earned, win rate, what needs attention. */
 @Component({
   selector: 'app-kpi-strip',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +49,6 @@ import { BoardSummary } from '../../core/utils/board-stats';
 })
 export class KpiStrip {
   readonly summary = input.required<BoardSummary>();
-  /** Insights shows the average paid deal instead of the attention counter. */
   readonly showAverage = input(false);
 
   protected readonly attention = computed(

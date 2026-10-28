@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import { I18n } from '../../core/i18n/i18n.service';
 import { MoneyPipe, TranslatePipe } from '../../core/i18n/pipes';
 import { TranslationKey } from '../../core/i18n/translations';
-import { Column, Label, STAGE_KINDS, StageKind } from '../../core/models/board.model';
+import { Column, Currency, Label, STAGE_KINDS, StageKind } from '../../core/models/board.model';
 import { CardFilter, EMPTY_FILTER, matchesFilter } from '../../core/utils/card-filter';
 import { Icon, IconName } from '../../shared/ui/icon';
 import { InlineEdit } from '../../shared/ui/inline-edit';
@@ -24,7 +24,6 @@ const KIND_ICONS: Record<StageKind, IconName> = {
   lost: 'circle-x',
 };
 
-/** One pipeline stage. Purely presentational: every change goes up as an output. */
 @Component({
   selector: 'app-board-column',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +49,7 @@ export class BoardColumn {
 
   readonly column = input.required<Column>();
   readonly labels = input<Label[]>([]);
-  readonly currency = input('USD');
+  readonly currency = input<Currency>('USD');
   readonly filter = input<CardFilter>(EMPTY_FILTER);
   readonly filtering = input(false);
   readonly connectedTo = input<string[]>([]);
@@ -76,8 +75,8 @@ export class BoardColumn {
   );
 
   protected cycleKind(): void {
-    const kinds = STAGE_KINDS;
-    const next = kinds[(kinds.indexOf(this.column().kind) + 1) % kinds.length];
+    const index = STAGE_KINDS.indexOf(this.column().kind);
+    const next = STAGE_KINDS[(index + 1) % STAGE_KINDS.length];
     this.kindChanged.emit(next);
   }
 

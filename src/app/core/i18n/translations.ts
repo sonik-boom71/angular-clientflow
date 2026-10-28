@@ -1,6 +1,5 @@
 import { Lang } from './lang';
 
-/** Plural forms follow Intl.PluralRules: English uses one/other, Ukrainian one/few/many. */
 export interface PluralEntry {
   one: string;
   few?: string;
@@ -155,7 +154,7 @@ const en = {
   'field.notesPlaceholder': 'Scope, links, agreements',
   'error.titleRequired': 'Enter a project name.',
   'error.tooLong': 'Keep it under {max} characters.',
-  'error.valueInvalid': 'Enter an amount of 0 or more.',
+  'error.valueInvalid': 'Enter an amount from 0 to {max}.',
 
   'insights.title': 'Insights',
   'insights.back': 'Back to the pipeline',
@@ -341,7 +340,7 @@ const uk: Record<TranslationKey, Entry> = {
   'field.notesPlaceholder': 'Обсяг робіт, посилання, домовленості',
   'error.titleRequired': 'Вкажіть назву проєкту.',
   'error.tooLong': 'Не більше {max} символів.',
-  'error.valueInvalid': 'Вкажіть суму від 0.',
+  'error.valueInvalid': 'Вкажіть суму від 0 до {max}.',
 
   'insights.title': 'Аналітика',
   'insights.back': 'Назад до воронки',

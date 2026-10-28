@@ -16,7 +16,6 @@ import {
 import { StorageService } from './storage.service';
 
 export const BOARDS_STORAGE_KEY = 'clientflow:v2:boards';
-/** Where TaskFlow v1 kept its boards; read once to migrate them. */
 export const LEGACY_STORAGE_KEY = 'taskflow:v1:boards';
 const LEGACY_DEMO_IDS = ['demo', 'reading'];
 
@@ -29,10 +28,6 @@ function moveItem<T>(items: readonly T[], from: number, to: number): T[] {
   return result;
 }
 
-/**
- * Single source of truth for pipelines. State lives in a signal, every change is an
- * immutable update, and an effect writes the result to localStorage.
- */
 @Injectable({ providedIn: 'root' })
 export class BoardStore {
   private readonly storage = inject(StorageService);
@@ -81,7 +76,6 @@ export class BoardStore {
     this.state.set([createDemoBoard(this.i18n.lang())]);
   }
 
-  /** Brings the demo pipeline back if it was deleted, and returns its id. */
   ensureDemoBoard(): string {
     if (!this.findBoard(DEMO_BOARD_ID)) {
       this.state.update((boards) => [createDemoBoard(this.i18n.lang()), ...boards]);
@@ -172,7 +166,6 @@ export class BoardStore {
     }));
   }
 
-  /** Moves a deal. A move to another stage restarts its idle timer and is logged in its history. */
   moveCard(
     boardId: string,
     fromColumnId: string,
@@ -221,7 +214,6 @@ export class BoardStore {
     });
   }
 
-  /** Replaces one board. A no-op change keeps the same array, so nothing re-renders or re-saves. */
   private updateBoard(boardId: string, change: (board: Board) => Board): void {
     this.state.update((boards) => {
       const index = boards.findIndex((board) => board.id === boardId);
@@ -259,8 +251,7 @@ export class BoardStore {
       return saved;
     }
     const demo = createDemoBoard(this.i18n.lang());
-    // First visit since the TaskFlow → ClientFlow change: keep the user's own boards,
-    // replace the old task demo with the new pipeline demo.
+    // Keep the user's boards from the old TaskFlow version, but replace its demo.
     const legacy = normalizeBoards(this.storage.load<unknown>(LEGACY_STORAGE_KEY));
     const ownBoards = legacy?.filter((board) => !LEGACY_DEMO_IDS.includes(board.id)) ?? [];
     return [demo, ...ownBoards];

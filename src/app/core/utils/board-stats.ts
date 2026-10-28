@@ -11,7 +11,6 @@ export interface BoardSummary {
   wonCount: number;
   wonValue: number;
   lostCount: number;
-  /** Share of closed deals that were won, 0–100, or null before anything closes. */
   winRate: number | null;
   averageWonValue: number | null;
   overdueCount: number;
@@ -66,12 +65,10 @@ export function stageTotals(board: Board): StageTotal[] {
 }
 
 export interface MonthTotal {
-  /** First day of the month, local time. */
   month: Date;
   value: number;
 }
 
-/** Won deals grouped by the month they reached a won stage, oldest first. */
 export function earningsByMonth(board: Board, months = 6, today: Date = new Date()): MonthTotal[] {
   const totals = Array.from({ length: months }, (_, index) => ({
     month: new Date(today.getFullYear(), today.getMonth() - (months - 1 - index), 1),
@@ -98,7 +95,6 @@ export interface ClientTotal {
   count: number;
 }
 
-/** Clients ranked by paid value. Names are matched ignoring case and extra spaces. */
 export function topClients(board: Board, limit = 5): ClientTotal[] {
   const totals = new Map<string, ClientTotal>();
   for (const card of board.columns.filter((c) => c.kind === 'won').flatMap((c) => c.cards)) {

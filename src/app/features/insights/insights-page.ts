@@ -14,7 +14,6 @@ import {
 import { Icon } from '../../shared/ui/icon';
 import { KpiStrip } from '../../shared/ui/kpi-strip';
 
-/** Bar width or height in percent of the biggest value, with a sliver for non-zero values. */
 function share(value: number, max: number): number {
   if (!max || !value) {
     return 0;
@@ -30,7 +29,6 @@ function share(value: number, max: number): number {
   styleUrl: './insights-page.scss',
 })
 export class InsightsPage {
-  /** Bound from the `:id` route parameter by withComponentInputBinding(). */
   readonly id = input.required<string>();
 
   private readonly store = inject(BoardStore);

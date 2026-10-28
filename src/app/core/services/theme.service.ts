@@ -4,7 +4,7 @@ import { StorageService } from './storage.service';
 
 export type Theme = 'light' | 'dark';
 
-export const THEME_STORAGE_KEY = 'clientflow:theme';
+const THEME_STORAGE_KEY = 'clientflow:theme';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {

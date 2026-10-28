@@ -11,10 +11,6 @@ export function isFilterActive(filter: CardFilter): boolean {
   return filter.query.trim().length > 0 || filter.labelIds.length > 0;
 }
 
-/**
- * A deal matches when its project, client, contact or notes contain the query
- * (case-insensitive) and it carries every selected label.
- */
 export function matchesFilter(card: Card, filter: CardFilter): boolean {
   const query = filter.query.trim().toLowerCase();
   if (query) {

@@ -2,12 +2,17 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { I18n } from '../core/i18n/i18n.service';
-import { LANGS } from '../core/i18n/lang';
+import { Lang } from '../core/i18n/lang';
 import { TranslatePipe } from '../core/i18n/pipes';
 import { ThemeService } from '../core/services/theme.service';
 import { Icon } from '../shared/ui/icon';
 
 export const REPOSITORY_URL = 'https://github.com/sonik-boom71/angular-clientflow';
+
+const LANGUAGES: { lang: Lang; short: string; name: string }[] = [
+  { lang: 'en', short: 'EN', name: 'English' },
+  { lang: 'uk', short: 'UA', name: 'Українська' },
+];
 
 @Component({
   selector: 'app-header',
@@ -16,7 +21,7 @@ export const REPOSITORY_URL = 'https://github.com/sonik-boom71/angular-clientflo
   styleUrl: './app-header.scss',
   template: `
     <header class="header">
-      <a routerLink="/" class="header__logo">
+      <a routerLink="/" class="header__logo" aria-label="ClientFlow">
         <app-icon name="kanban" [size]="22" />
         <span>ClientFlow</span>
       </a>
@@ -29,16 +34,17 @@ export const REPOSITORY_URL = 'https://github.com/sonik-boom71/angular-clientflo
 
       <div class="header__actions">
         <div class="lang" role="group" [attr.aria-label]="'nav.language' | t">
-          @for (lang of langs; track lang) {
+          @for (option of languages; track option.lang) {
             <button
               type="button"
               class="lang__option"
-              [class.lang__option--on]="i18n.lang() === lang"
-              [attr.aria-pressed]="i18n.lang() === lang"
-              [attr.lang]="lang"
-              (click)="i18n.lang.set(lang)"
+              [class.lang__option--on]="i18n.lang() === option.lang"
+              [attr.aria-pressed]="i18n.lang() === option.lang"
+              [attr.aria-label]="option.name"
+              [attr.lang]="option.lang"
+              (click)="i18n.lang.set(option.lang)"
             >
-              {{ lang === 'en' ? 'EN' : 'UA' }}
+              {{ option.short }}
             </button>
           }
         </div>
@@ -68,7 +74,7 @@ export const REPOSITORY_URL = 'https://github.com/sonik-boom71/angular-clientflo
 export class AppHeader {
   protected readonly theme = inject(ThemeService);
   protected readonly i18n = inject(I18n);
-  protected readonly langs = LANGS;
+  protected readonly languages = LANGUAGES;
   protected readonly repositoryUrl = REPOSITORY_URL;
   protected readonly themeLabel = computed(() =>
     this.theme.theme() === 'dark' ? 'theme.toLight' : 'theme.toDark',

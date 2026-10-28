@@ -14,15 +14,15 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { I18n } from '../../core/i18n/i18n.service';
 import { LocalDatePipe, TranslatePipe } from '../../core/i18n/pipes';
-import { Card, CardChanges, Label } from '../../core/models/board.model';
+import { Card, CardChanges, Currency, Label } from '../../core/models/board.model';
 import { Icon } from '../../shared/ui/icon';
 import { notBlank } from '../../shared/validators';
 
-export const TITLE_MAX = 120;
-export const TEXT_MAX = 120;
-export const NOTES_MAX = 2000;
+const TITLE_MAX = 120;
+const TEXT_MAX = 120;
+const NOTES_MAX = 2000;
+const VALUE_MAX = 100_000_000;
 
-/** Deal editor in a native <dialog>: focus trapping, Escape and the backdrop come for free. */
 @Component({
   selector: 'app-card-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,7 +36,7 @@ export class CardDialog implements OnInit {
   readonly card = input.required<Card>();
   readonly labels = input<Label[]>([]);
   readonly columnTitle = input('');
-  readonly currency = input('USD');
+  readonly currency = input<Currency>('USD');
 
   readonly saved = output<CardChanges>();
   readonly deleted = output();
@@ -45,6 +45,12 @@ export class CardDialog implements OnInit {
   protected readonly titleMax = TITLE_MAX;
   protected readonly textMax = TEXT_MAX;
   protected readonly notesMax = NOTES_MAX;
+  protected readonly valueMax = VALUE_MAX;
+  protected readonly valueError = computed(() =>
+    this.i18n.t('error.valueInvalid', {
+      max: new Intl.NumberFormat(this.i18n.locale()).format(VALUE_MAX),
+    }),
+  );
 
   protected readonly form = new FormGroup({
     title: new FormControl('', {
@@ -60,7 +66,7 @@ export class CardDialog implements OnInit {
       validators: [Validators.maxLength(TEXT_MAX)],
     }),
     value: new FormControl<number | null>(null, {
-      validators: [Validators.min(0), Validators.max(100_000_000)],
+      validators: [Validators.min(0), Validators.max(VALUE_MAX)],
     }),
     dueDate: new FormControl('', { nonNullable: true }),
     labelIds: new FormControl<string[]>([], { nonNullable: true }),
@@ -70,7 +76,6 @@ export class CardDialog implements OnInit {
     }),
   });
 
-  /** Newest first, as "Created in …" / "Moved to …" lines. */
   protected readonly history = computed(() =>
     this.card()
       .history.map((event, index) => ({
@@ -157,7 +162,6 @@ export class CardDialog implements OnInit {
     }
   }
 
-  /** A click on the dialog element itself (not its content) means a click on the backdrop. */
   protected onDialogClick(event: MouseEvent): void {
     if (event.target === this.dialog().nativeElement) {
       this.close();

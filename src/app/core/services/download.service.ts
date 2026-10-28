@@ -1,6 +1,5 @@
 import { DOCUMENT, Injectable, inject } from '@angular/core';
 
-/** Saves generated text (CSV, JSON) as a file in the browser. */
 @Injectable({ providedIn: 'root' })
 export class DownloadService {
   private readonly document = inject(DOCUMENT);

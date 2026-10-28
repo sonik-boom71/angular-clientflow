@@ -80,7 +80,7 @@ describe('CardDialog', () => {
     await submit();
 
     expect(saved).toEqual([]);
-    expect(element.textContent).toContain('Enter an amount of 0 or more.');
+    expect(element.textContent).toContain('Enter an amount from 0 to 100,000,000.');
   });
 
   it('emits trimmed changes on save', async () => {

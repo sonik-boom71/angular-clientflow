@@ -99,7 +99,7 @@
 }
 
 .scroller {
-  /* Keeps absolutely positioned .sr-only labels inside the scroll area. */
+  /* Keeps the hidden .sr-only labels inside the scroll area. */
   position: relative;
   display: flex;
   flex: 1;

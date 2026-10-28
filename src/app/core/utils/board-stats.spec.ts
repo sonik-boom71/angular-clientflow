@@ -5,7 +5,7 @@ import { earningsByMonth, stageTotals, summarizeBoard, topClients } from './boar
 describe('board stats', () => {
   const today = new Date(2026, 9, 22, 12);
 
-  /** Leads: $500 + $300 (one overdue, one idle); Paid: $1,000 + $2,000; Lost: $700. */
+  // Leads: $500 (overdue) + $300 (idle). Paid: $1,000 + $2,000 + no amount. Lost: $700.
   function pipeline(): Board {
     const board = testBoard();
     board.columns[0].cards = [

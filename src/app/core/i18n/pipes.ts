@@ -4,8 +4,7 @@ import { DateStyle, formatDate, formatMoney } from './format';
 import { I18n, TranslationParams } from './i18n.service';
 import { TranslationKey } from './translations';
 
-// These pipes are impure on purpose: they read the language signal, so a language
-// switch re-renders every view that uses them. The work per call is a map lookup.
+// Impure, so the text updates when the language changes.
 
 @Pipe({ name: 't', pure: false })
 export class TranslatePipe implements PipeTransform {

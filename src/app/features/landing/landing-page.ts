@@ -42,7 +42,6 @@ export class LandingPage {
   protected readonly features = FEATURES;
   protected readonly steps = STEPS;
   protected readonly repositoryUrl = REPOSITORY_URL;
-  /** The hero screenshot matches the current language and theme. */
   protected readonly screenshot = computed(
     () => `screenshots/pipeline-${this.i18n.lang()}-${this.theme.theme()}.png`,
   );

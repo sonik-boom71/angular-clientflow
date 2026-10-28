@@ -26,7 +26,13 @@
 
     <div class="field">
       <label for="card-title">{{ 'field.title' | t }}</label>
-      <input id="card-title" class="input" formControlName="title" autocomplete="off" />
+      <input
+        id="card-title"
+        class="input"
+        formControlName="title"
+        autocomplete="off"
+        [attr.maxlength]="titleMax"
+      />
       @let title = form.controls.title;
       @if (title.touched && title.invalid) {
         <p class="field__error" role="alert">
@@ -47,6 +53,7 @@
           class="input"
           formControlName="client"
           autocomplete="off"
+          [attr.maxlength]="textMax"
           [placeholder]="'field.clientPlaceholder' | t"
         />
       </div>
@@ -57,6 +64,7 @@
           class="input"
           formControlName="contact"
           autocomplete="off"
+          [attr.maxlength]="textMax"
           [placeholder]="'field.contactPlaceholder' | t"
         />
       </div>
@@ -68,13 +76,14 @@
           type="number"
           inputmode="decimal"
           min="0"
+          [attr.max]="valueMax"
           step="any"
           formControlName="value"
           placeholder="0"
         />
         @let value = form.controls.value;
         @if (value.touched && value.invalid) {
-          <p class="field__error" role="alert">{{ 'error.valueInvalid' | t }}</p>
+          <p class="field__error" role="alert">{{ valueError() }}</p>
         }
       </div>
       <div class="field">

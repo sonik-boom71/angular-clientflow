@@ -1,7 +1,7 @@
 import { normalizeBoards } from '../data/normalize';
 import { Board } from '../models/board.model';
 
-/** Byte order mark: tells Excel the file is UTF-8, so Cyrillic text isn't garbled. */
+// UTF-8 byte order mark, so Excel reads Cyrillic correctly.
 export const BOM = String.fromCharCode(0xfeff);
 
 const CSV_HEADER = [
@@ -18,22 +18,18 @@ const CSV_HEADER = [
   'Created',
 ];
 
-/**
- * Quotes a CSV cell when needed. Text that starts like a formula (=, +, -, @) gets a
- * leading apostrophe so spreadsheet apps don't execute it.
- */
 function csvCell(value: string | number | null): string {
   if (value === null) {
     return '';
   }
   let text = String(value);
+  // Text that looks like a formula gets an apostrophe, so spreadsheets don't run it.
   if (typeof value === 'string' && /^[=+\-@\t\r]/.test(text)) {
     text = `'${text}`;
   }
   return /[",;\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
-/** All deals of a pipeline as CSV, starting with a BOM. */
 export function boardToCsv(board: Board): string {
   const labelNames = new Map(board.labels.map((label) => [label.id, label.name]));
   const rows = board.columns.flatMap((column) =>
@@ -74,7 +70,6 @@ export function createBackup(boards: Board[]): string {
   return JSON.stringify(backup, null, 2);
 }
 
-/** Parses a backup file. Returns null for anything that isn't a list of pipelines. */
 export function parseBackup(text: string): Board[] | null {
   try {
     const boards = normalizeBoards(JSON.parse(text));
@@ -84,7 +79,6 @@ export function parseBackup(text: string): Board[] | null {
   }
 }
 
-/** A file-name-safe version of a title that keeps Cyrillic letters. */
 export function fileSlug(title: string): string {
   return (
     title

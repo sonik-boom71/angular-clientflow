@@ -20,8 +20,8 @@ import {
   CURRENCIES,
   CardChanges,
   Column,
-  Currency,
   StageKind,
+  isCurrency,
 } from '../../core/models/board.model';
 import { BoardStore } from '../../core/services/board-store';
 import { DownloadService } from '../../core/services/download.service';
@@ -34,7 +34,6 @@ import { KpiStrip } from '../../shared/ui/kpi-strip';
 import { BoardColumn, columnListId } from './board-column';
 import { CardDialog } from './card-dialog';
 
-/** Short press-and-hold on touch screens so the board can still be scrolled with a finger. */
 const DRAG_START_DELAY = { touch: 200, mouse: 0 };
 
 @Component({
@@ -57,7 +56,6 @@ const DRAG_START_DELAY = { touch: 200, mouse: 0 };
   host: { '(document:keydown)': 'onKeydown($event)' },
 })
 export class BoardPage {
-  /** Bound from the `:id` route parameter by withComponentInputBinding(). */
   readonly id = input.required<string>();
 
   private readonly store = inject(BoardStore);
@@ -113,7 +111,9 @@ export class BoardPage {
   }
 
   protected setCurrency(currency: string): void {
-    this.store.setCurrency(this.id(), currency as Currency);
+    if (isCurrency(currency)) {
+      this.store.setCurrency(this.id(), currency);
+    }
   }
 
   protected deleteBoard(): void {
@@ -191,7 +191,6 @@ export class BoardPage {
     this.selectedLabelIds.set([]);
   }
 
-  /** "/" focuses the search box, like on GitHub. */
   protected onKeydown(event: KeyboardEvent): void {
     const target = event.target as HTMLElement | null;
     const typing = target?.closest('input, textarea, select, [contenteditable], dialog');

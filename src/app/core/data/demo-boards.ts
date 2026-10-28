@@ -5,13 +5,15 @@ import { createDefaultColumns, createLabels } from './board-factory';
 
 export const DEMO_BOARD_ID = 'demo';
 
+// Positions of the default stages and labels created by board-factory.
+const STAGE = { leads: 0, proposal: 1, progress: 2, invoiced: 3, paid: 4, lost: 5 } as const;
+const LABEL = { website: 0, design: 1, mobile: 2, support: 3, urgent: 4 } as const;
+
 interface DemoDeal {
-  /** Index in the default stages: 0 leads … 4 paid, 5 lost. */
   stage: number;
   title: [en: string, uk: string];
   client: string;
   value: number;
-  /** Indexes in the default labels: 0 website, 1 design, 2 mobile, 3 support, 4 urgent. */
   labels: number[];
   daysInStage: number;
   dueInDays?: number;
@@ -21,11 +23,11 @@ interface DemoDeal {
 
 const DEALS: DemoDeal[] = [
   {
-    stage: 0,
+    stage: STAGE.leads,
     title: ['Landing page for a coffee shop', 'Лендинг для кав’ярні'],
     client: 'Brew & Co',
     value: 900,
-    labels: [0],
+    labels: [LABEL.website],
     daysInStage: 2,
     contact: 'hello@brewco.example',
     notes: [
@@ -34,20 +36,20 @@ const DEALS: DemoDeal[] = [
     ],
   },
   {
-    stage: 0,
+    stage: STAGE.leads,
     title: ['Online store redesign', 'Редизайн інтернет-магазину'],
     client: 'Kvitka Flowers',
     value: 2400,
-    labels: [1, 0],
+    labels: [LABEL.design, LABEL.website],
     daysInStage: 10,
     contact: '@kvitka_shop',
   },
   {
-    stage: 1,
+    stage: STAGE.proposal,
     title: ['Booking app MVP', 'MVP застосунку для бронювань'],
     client: 'FitSpace',
     value: 4800,
-    labels: [2],
+    labels: [LABEL.mobile],
     daysInStage: 4,
     dueInDays: 3,
     contact: 'anna@fitspace.example',
@@ -57,94 +59,94 @@ const DEALS: DemoDeal[] = [
     ],
   },
   {
-    stage: 1,
+    stage: STAGE.proposal,
     title: ['SEO audit', 'SEO-аудит'],
     client: 'Lviv Tours',
     value: 500,
-    labels: [0],
+    labels: [LABEL.website],
     daysInStage: 12,
   },
   {
-    stage: 2,
+    stage: STAGE.progress,
     title: ['Corporate website', 'Корпоративний сайт'],
     client: 'Nova Logistics',
     value: 3200,
-    labels: [0],
+    labels: [LABEL.website],
     daysInStage: 15,
     dueInDays: 1,
   },
   {
-    stage: 2,
+    stage: STAGE.progress,
     title: ['Logo and brand book', 'Логотип і брендбук'],
     client: 'Smak Bakery',
     value: 1200,
-    labels: [1, 4],
+    labels: [LABEL.design, LABEL.urgent],
     daysInStage: 9,
     dueInDays: -2,
   },
   {
-    stage: 3,
+    stage: STAGE.invoiced,
     title: ['Monthly app support', 'Щомісячна підтримка застосунку'],
     client: 'FitSpace',
     value: 600,
-    labels: [3, 2],
+    labels: [LABEL.support, LABEL.mobile],
     daysInStage: 3,
     dueInDays: 5,
   },
   {
-    stage: 4,
+    stage: STAGE.paid,
     title: ['Online store', 'Інтернет-магазин'],
     client: 'Kvitka Flowers',
     value: 2800,
-    labels: [0],
+    labels: [LABEL.website],
     daysInStage: 8,
   },
   {
-    stage: 4,
+    stage: STAGE.paid,
     title: ['Landing page', 'Лендинг'],
     client: 'Lviv Tours',
     value: 700,
-    labels: [0],
+    labels: [LABEL.website],
     daysInStage: 38,
   },
   {
-    stage: 4,
+    stage: STAGE.paid,
     title: ['Dashboard UI', 'UI для дашборду'],
     client: 'Nova Logistics',
     value: 1900,
-    labels: [1],
+    labels: [LABEL.design],
     daysInStage: 66,
   },
   {
-    stage: 4,
+    stage: STAGE.paid,
     title: ['Monthly app support', 'Щомісячна підтримка застосунку'],
     client: 'FitSpace',
     value: 600,
-    labels: [3],
+    labels: [LABEL.support],
     daysInStage: 95,
   },
   {
-    stage: 4,
+    stage: STAGE.paid,
     title: ['Portfolio website', 'Сайт-портфоліо'],
     client: 'Olena Koval',
     value: 650,
-    labels: [0, 1],
+    labels: [LABEL.website, LABEL.design],
     daysInStage: 125,
   },
   {
-    stage: 4,
+    stage: STAGE.paid,
     title: ['Email templates', 'Шаблони листів'],
     client: 'Brew & Co',
     value: 400,
-    labels: [1],
+    labels: [LABEL.design],
     daysInStage: 150,
   },
   {
-    stage: 5,
+    stage: STAGE.lost,
     title: ['Crypto exchange UI', 'UI для криптобіржі'],
     client: 'CoinNest',
     value: 5000,
-    labels: [1],
+    labels: [LABEL.design],
     daysInStage: 30,
     notes: ['They chose a cheaper agency.', 'Обрали дешевшу агенцію.'],
   },
@@ -156,7 +158,6 @@ function daysAgo(days: number): Date {
   return date;
 }
 
-/** yyyy-mm-dd for today shifted by `offsetDays`, so demo deadlines always look current. */
 function dayFromToday(offsetDays: number): string {
   const date = daysAgo(-offsetDays);
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -164,31 +165,28 @@ function dayFromToday(offsetDays: number): string {
   return `${date.getFullYear()}-${month}-${day}`;
 }
 
-/** A realistic freelance pipeline with dates relative to today. */
 export function createDemoBoard(lang: Lang): Board {
   const columns = createDefaultColumns(lang);
   const labels = createLabels(lang);
-  const text = lang === 'en' ? 0 : 1;
+  const leads = columns[STAGE.leads];
+  const textIndex = lang === 'en' ? 0 : 1;
 
   for (const deal of DEALS) {
     const column = columns[deal.stage];
     const enteredAt = daysAgo(deal.daysInStage).toISOString();
-    const createdAt =
-      deal.stage === 0 ? enteredAt : daysAgo(deal.daysInStage + 10 + deal.stage).toISOString();
-    const history: StageEvent[] = [
-      { columnId: columns[0].id, columnTitle: columns[0].title, at: createdAt },
-    ];
-    if (deal.stage !== 0) {
+    const createdAt = column === leads ? enteredAt : daysAgo(deal.daysInStage + 14).toISOString();
+    const history: StageEvent[] = [{ columnId: leads.id, columnTitle: leads.title, at: createdAt }];
+    if (column !== leads) {
       history.push({ columnId: column.id, columnTitle: column.title, at: enteredAt });
     }
 
     column.cards.push({
       id: createId(),
-      title: deal.title[text],
+      title: deal.title[textIndex],
       client: deal.client,
       contact: deal.contact ?? '',
       value: deal.value,
-      description: deal.notes?.[text] ?? '',
+      description: deal.notes?.[textIndex] ?? '',
       labelIds: deal.labels.map((index) => labels[index].id),
       dueDate: deal.dueInDays === undefined ? null : dayFromToday(deal.dueInDays),
       createdAt,

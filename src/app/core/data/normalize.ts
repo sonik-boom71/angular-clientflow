@@ -23,11 +23,6 @@ const text = (value: unknown, fallback = ''): string =>
   typeof value === 'string' ? value : fallback;
 const notNull = <T>(value: T | null): value is T => value !== null;
 
-/**
- * Turns anything read from storage or an imported file into valid boards.
- * Missing fields get defaults, so data saved by older versions (TaskFlow v1) keeps working.
- * Returns null when the input isn't a list of boards at all.
- */
 export function normalizeBoards(input: unknown): Board[] | null {
   const list = Array.isArray(input)
     ? input

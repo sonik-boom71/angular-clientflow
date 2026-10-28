@@ -38,7 +38,7 @@ const LABELS: Record<Lang, [string, Label['color']][]> = {
   ],
 };
 
-export const DEFAULT_CURRENCY: Record<Lang, Currency> = { en: 'USD', uk: 'UAH' };
+const DEFAULT_CURRENCY: Record<Lang, Currency> = { en: 'USD', uk: 'UAH' };
 
 export function createLabels(lang: Lang): Label[] {
   return LABELS[lang].map(([name, color]) => ({ id: createId(), name, color }));

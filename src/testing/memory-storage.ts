@@ -1,7 +1,6 @@
 import { Board, Card } from '../app/core/models/board.model';
 import { StorageService } from '../app/core/services/storage.service';
 
-/** In-memory stand-in for StorageService, so tests never touch real localStorage. */
 export class MemoryStorage implements Pick<StorageService, 'load' | 'save'> {
   readonly data = new Map<string, unknown>();
 
@@ -31,10 +30,7 @@ export function testCard(id: string, extra: Partial<Card> = {}): Card {
   };
 }
 
-/**
- * Pipeline "b1" in USD: c1 Leads (deals 1, 2, 3), c2 Paid (deal 4, $1,000),
- * c3 Lost (empty).
- */
+// Stages: c1 Leads (deals 1, 2, 3), c2 Paid (deal 4, $1,000), c3 Lost (empty).
 export function testBoard(): Board {
   return {
     id: 'b1',

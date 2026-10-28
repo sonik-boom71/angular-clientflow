@@ -16,7 +16,10 @@
       content="Track every client from first message to paid invoice. Free, no sign-up, English and Ukrainian."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/screenshots/pipeline-en-light.png" />
+    <meta
+      property="og:image"
+      content="https://angular-clientflow.vercel.app/screenshots/pipeline-en-light.png"
+    />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,7 +28,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
     />
     <script>
-      // Apply the saved theme and language before Angular boots, so nothing flashes.
+      // Set the saved theme and language before the app loads, to avoid a flash.
       try {
         var theme = JSON.parse(localStorage.getItem('clientflow:theme'));
         if (theme === 'light' || theme === 'dark') {

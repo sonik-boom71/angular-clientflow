@@ -1,4 +1,3 @@
-/** Creates a short unique id. Falls back to Math.random where crypto.randomUUID is unavailable. */
 export function createId(): string {
   const uuid = globalThis.crypto?.randomUUID?.();
   if (uuid) {

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
+// Icon paths from Lucide (https://lucide.dev), ISC license.
 const CIRCLE = 'M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0';
 
-/** Stroke icons on a 24×24 grid (shapes adapted from Lucide, ISC license). */
 const ICONS = {
   plus: ['M12 5v14', 'M5 12h14'],
   x: ['M18 6 6 18', 'M6 6l12 12'],

@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
 
-/**
- * Thin wrapper around localStorage. Kept as a service so tests can replace it
- * and so private mode or a full quota never breaks the app.
- */
 @Injectable({ providedIn: 'root' })
 export class StorageService {
   load<T>(key: string): T | null {

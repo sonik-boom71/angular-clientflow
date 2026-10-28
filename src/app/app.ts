@@ -18,7 +18,7 @@ import { AppHeader } from './layout/app-header';
 })
 export class App {
   constructor() {
-    // Created here so the saved theme applies before the first page renders.
+    // Starts the theme service, which applies the saved theme.
     inject(ThemeService);
   }
 }

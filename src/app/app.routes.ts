@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { boardExistsGuard } from './core/guards/board-exists.guard';
 
-// Route titles are translation keys, resolved by TranslatedTitleStrategy.
+// Titles are translation keys, see TranslatedTitleStrategy.
 export const routes: Routes = [
   {
     path: '',

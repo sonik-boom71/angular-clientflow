@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 
 import { LocalDatePipe, MoneyPipe, TranslatePipe } from '../../core/i18n/pipes';
 import { TranslationKey } from '../../core/i18n/translations';
-import { Card, Label, StageKind } from '../../core/models/board.model';
+import { Card, Currency, Label, StageKind } from '../../core/models/board.model';
 import { getDealHealth } from '../../core/utils/deal-health';
 import { DueStatus } from '../../core/utils/due-status';
 import { Icon } from '../../shared/ui/icon';
@@ -73,7 +73,7 @@ export class CardItem {
   readonly card = input.required<Card>();
   readonly labels = input<Label[]>([]);
   readonly kind = input<StageKind>('open');
-  readonly currency = input('USD');
+  readonly currency = input<Currency>('USD');
   readonly opened = output();
 
   protected readonly cardLabels = computed(() => {

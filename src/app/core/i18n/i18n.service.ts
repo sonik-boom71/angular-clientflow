@@ -8,10 +8,6 @@ export const LANG_STORAGE_KEY = 'clientflow:lang';
 
 export type TranslationParams = Record<string, string | number>;
 
-/**
- * Runtime translations without a page reload. The language is a signal, so every
- * template that calls t() re-renders when it changes.
- */
 @Injectable({ providedIn: 'root' })
 export class I18n {
   private readonly storage = inject(StorageService);
@@ -30,10 +26,7 @@ export class I18n {
   }
 
   t(key: TranslationKey, params?: TranslationParams): string {
-    const entry: Entry | undefined = TRANSLATIONS[this.lang()][key] ?? TRANSLATIONS.en[key];
-    if (entry === undefined) {
-      return key;
-    }
+    const entry = TRANSLATIONS[this.lang()][key];
     const text = typeof entry === 'string' ? entry : this.pluralForm(entry, params?.['count']);
     return params ? interpolate(text, params) : text;
   }

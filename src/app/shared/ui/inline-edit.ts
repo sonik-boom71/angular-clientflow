@@ -9,7 +9,6 @@ import {
   viewChild,
 } from '@angular/core';
 
-/** Text that turns into an input on click. Enter or blur saves, Escape cancels. */
 @Component({
   selector: 'app-inline-edit',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -3,7 +3,6 @@ import { CanActivateFn, Router } from '@angular/router';
 
 import { BoardStore } from '../services/board-store';
 
-/** Sends the user to the pipelines list when the pipeline id in the URL doesn't exist. */
 export const boardExistsGuard: CanActivateFn = (route) => {
   const store = inject(BoardStore);
   const router = inject(Router);

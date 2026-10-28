@@ -19,11 +19,10 @@
       </h1>
       <label class="sr-only" for="board-currency">{{ 'board.currency' | t }}</label>
       <select
+        #currency
         id="board-currency"
         class="input currency"
-        [value]="board.currency"
         (change)="setCurrency(currency.value)"
-        #currency
       >
         @for (code of currencies; track code) {
           <option [value]="code" [selected]="code === board.currency">{{ code }}</option>
